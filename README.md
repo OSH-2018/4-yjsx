@@ -15,4 +15,11 @@
 2. 缓存边信道攻击
 边信道攻击即利用电子设备在运行过程中的时间消耗，功率消耗，或电磁辐射之类的侧信道信息泄漏而进行的对加密设备的攻击方式。在这个实验中，目标程序首先访问内存，该内存块会被写入cache中，此时攻击者只需重新加载每一个内存块，并测量读取时间，即可通过加载时间的长短判断出目标程序读的是哪一个内存块。这样攻击者通过这种方式即可进行内存的越权访问。
 ## 实验效果
+测试程序:运行meltdown.sh即可。
+在我的虚拟机上运行结果如下：
+![2](./pic/2.png)
+![3](./pic/3.png)
 ## 参考资料
+1. https://linuxhint.com/check-patch-spectre-meltdown-ubuntu/
+2. https://github.com/IAIK/meltdown
+3. https://github.com/paboldin/meltdown-exploit

